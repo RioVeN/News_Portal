@@ -12,7 +12,13 @@ Post
 {% block content %}
 {% load censure %}
     <h1>Всего Новостей: {{ posts |length }} </h1>
+    <hr>
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
 
+
+        <input type="submit" value="Найти" />
+   </form>
     <hr>
     {% if posts %}
         <table >
