@@ -3,7 +3,7 @@ from .models import Post, Author, PostCategory
 
 
 class PostFilter(FilterSet):
-    #author = ModelChoiceFilter(field_name='author', queryset=Author.objects.all(), label='Author', empty_label='любой')
+    author = ModelChoiceFilter(field_name='author', queryset=Author.objects.all(), label='Author', empty_label='Любой')
     #posts = ModelChoiceFilter(field_name='posts', queryset=PostCategory.objects.all(), label='Category', empty_label='любой' )
     class Meta:
         model = Post

@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.urls import reverse
+
+#from django.core.validators import MinValueValidator
 
 
 class Author(models.Model):
@@ -42,7 +45,11 @@ class Category(models.Model):
     category = models.CharField(max_length=2, choices=POSITION, default='HN', unique=True)
 
     def __str__(self):
-        return self.category
+        return self.get_category_display()
+
+
+
+
 
 
 class Post(models.Model):
@@ -72,16 +79,17 @@ class Post(models.Model):
         self.rating_post -= 1
         self.save()
 
-    def __str__(self):
-        return self.posts
+
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
 
 class PostCategory(models.Model):
     Post = models.ForeignKey(Post, on_delete=models.CASCADE)
     Category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.Category
+
 
 class Comment(models.Model):
     objects = None

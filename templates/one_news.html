@@ -16,6 +16,11 @@ Post
 <p style="text-indent: 25px;">
 
     {{news.post_text | censor}}
+
+
 </p>
+<hr>
+<a class="nav-link" href="/news/{{news.id}}/delete/">Удалить</a>
+<a class="nav-link" href="{{news.id}}/edit/">Редактировать</a>
 
 {% endblock content %}
