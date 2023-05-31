@@ -26,7 +26,7 @@ Post
             <tr>
                 <td>{{ news.author.user_author.first_name }}</td>
                 <td>{{ news.title | censor }}</td>
-                <td>{{ news.time_in_comment |date:'j M Y'  }}</td>
+                <td>{{ news.time_in_comment |date:'j m Y'  }}</td>
                 <td>{{ news.post_text |truncatewords:20 | censor }}</td>
             </tr>
             {% endfor %}

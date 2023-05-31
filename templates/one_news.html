@@ -12,10 +12,11 @@ Post
 
 <h1>{{ news.title | censor }}</h1>
 <hr>
-<h5>{{ news.time_in_comment |date:'d M Y'  }}</h5>
+<h5>{{ news.time_in_comment |date:'d m Y'  }}</h5>
 <p style="text-indent: 25px;">
 
     {{news.post_text | censor}}
+<h3>{{ news.author.user_author.first_name }}</h3>
 
 
 </p>

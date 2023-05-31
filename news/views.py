@@ -1,6 +1,3 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -38,6 +35,9 @@ class PostSearch(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
+        context['curr_date'] = self.request.GET.get('time_in_comment__date__gte')
+        context['curr_title'] = self.request.GET.get('title__icontains')
+
         return context
 
 
@@ -78,23 +78,3 @@ class ArticleCreate(CreateView):
         post.choice_title = 'AR'
         return super().form_valid(form)
 
-# def create_post(request):
-#     form = PostForm()
-#     if request.method == 'POST':
-#         form = PostForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponseRedirect('/news/')
-#
-#     return render(request, 'post_edit.html', {'form': form})
-
-
-# def create_article(request):
-#     form = PostForm()
-#     if request.method == 'POST':
-#         form = PostForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponseRedirect('/article/')
-#
-#     return render(request, 'article_create.html', {'form': form})

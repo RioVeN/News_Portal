@@ -1,9 +1,6 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
-
 {% load custom_tags %}
-
-
 <!-- Название у нас будет post -->
 {% block title %}
 Post
@@ -14,11 +11,29 @@ Post
     <h1>Всего Новостей: {{ posts |length }} </h1>
     <hr>
     <form action="" method="get">
-        {{ filterset.form.as_p }}
+        <label >Автор:</label>
+                {{ filterset.form.author }}
+        <p></p>
+        <div>
+             <label >Дата:</label>
+            <input   type="date"  name="time_in_comment__date__gte" value="{{curr_date}}">
+        </div>
 
 
-        <input type="submit" value="Найти" />
+        <p></p>
+
+              <label >Заголовок:</label>
+
+                  <input type="text"  name="title__icontains" value="{{ curr_title }}">
+
+        <p></p>
+
+        <p> <input type="submit" value="Найти" /></p>
+
+
    </form>
+
+
     <hr>
     {% if posts %}
         <table >
@@ -32,7 +47,7 @@ Post
             <tr>
                 <td>{{ news.author.user_author.first_name }}</td>
                 <td>{{ news.title | censor }}</td>
-                <td>{{ news.time_in_comment |date:'j M Y'  }}</td>
+                <td>{{ news.time_in_comment |date:'j-m-Y'  }}</td>
                 <td>{{ news.post_text |truncatewords:20 | censor }}</td>
             </tr>
             {% endfor %}
@@ -41,7 +56,7 @@ Post
 
 
     {% else %}
-        <h2>Товаров нет!</h2>
+        <h2>Новостей нет!</h2>
     {% endif %}
 
    {# Информация о предыдущих страницах #}

@@ -2,8 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.urls import reverse
-
-#from django.core.validators import MinValueValidator
+import django
 
 
 class Author(models.Model):
@@ -48,10 +47,6 @@ class Category(models.Model):
         return self.get_category_display()
 
 
-
-
-
-
 class Post(models.Model):
     objects = None
     article = 'AR'
@@ -62,7 +57,7 @@ class Post(models.Model):
     ]
     title = models.TextField(max_length=50)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    time_in_comment = models.DateTimeField(auto_now_add=True)
+    time_in_comment = models.DateTimeField(default=django.utils.timezone.now)
     choice_title = models.CharField(max_length=2, choices=POST)
     post_text = models.TextField(max_length=500)
     posts = models.ManyToManyField('Category', through='PostCategory')
@@ -78,6 +73,9 @@ class Post(models.Model):
     def dislike(self):
         self.rating_post -= 1
         self.save()
+
+    def __str__(self):
+        return self.get_choice_title_display()
 
 
 
