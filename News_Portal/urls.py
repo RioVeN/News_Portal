@@ -26,7 +26,8 @@ urlpatterns = [
     # Делаем так, чтобы все адреса из нашего приложения
     # подключались к главному приложению с префиксом .
     path('', include('news.urls')),
-    #path('article/', include('news.urls'))
+
+    path('accounts/', include('allauth.urls')),
 
 
 

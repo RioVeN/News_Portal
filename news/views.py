@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import PostForm
 from .models import Post
@@ -41,7 +42,7 @@ class PostSearch(ListView):
         return context
 
 
-class PostCreate(CreateView):
+class PostCreate(LoginRequiredMixin, CreateView):
     # Указываем нашу разработанную форму
     form_class = PostForm
     # модель товаров
@@ -54,18 +55,20 @@ class PostCreate(CreateView):
         post.choice_title = 'NE'
         return super().form_valid(form)
 
-class PostUpdate(UpdateView):
+
+class PostUpdate(LoginRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
+    success_url = ''
 
-class PostDelete(DeleteView):
+class PostDelete(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
 
 
-class ArticleCreate(CreateView):
+class ArticleCreate(LoginRequiredMixin, CreateView):
     # Указываем нашу разработанную форму
     form_class = PostForm
     # модель товаров
