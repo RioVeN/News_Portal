@@ -12,6 +12,9 @@ Post
 {% block content %}
 {% load censure %}
     <h1>Всего Новостей: {{ posts |length }} </h1>
+{% if is_not_author %}
+<button> <a href="upgrade/"> Стать автором!</a> </button>
+{% endif %}
 
     <hr>
     {% if posts %}
