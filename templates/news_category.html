@@ -33,7 +33,9 @@ Post
                 <td>{%  for category in news.categories.all %}
                         {{category}}
                     {% endfor %}</td>
-                <td>{{ news.time_in_comment |date:'j m Y'  }}</td>
+                <td>{{ news.time_in_comment |date:'j m Y'  }}
+                     <button> <a href=""> Подробнее</a> </button>
+                </td>
                 <td>{{ news.post_text |truncatewords:20 | censor }}</td>
             </tr>
             {% endfor %}
