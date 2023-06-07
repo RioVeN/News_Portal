@@ -6,4 +6,7 @@ admin.site.register(Author)
 admin.site.register(PostCategory)
 admin.site.register(Comment)
 admin.site.register(Category)
+admin.site.register(PostSubscribers)
+
+
 # Register your models here.

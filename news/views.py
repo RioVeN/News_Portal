@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from .forms import PostForm
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter
 
 
@@ -12,6 +12,10 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.forms import SignupForm
+
+from django.core.mail import send_mail
+
+
 class SocSignupForm(SignupForm):
     def save(self, request):
         user = super(SocSignupForm, self).save(request)
@@ -28,19 +32,6 @@ def upgrade_me(request):
     if not request.user.groups.filter(name='author').exists():
         author_group.user_set.add(user)
     return redirect('/')
-
-
-class PostEconomyList(LoginRequiredMixin, ListView):
-    model = Post
-    ordering = '-time_in_comment'
-    template_name = 'news_economy.html'
-    context_object_name = 'all'
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_not_author'] = not self.request.user.groups.filter(name = 'author').exists()
-        return context
 
 
 class PostList(LoginRequiredMixin, ListView):
@@ -91,6 +82,8 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     # и новый шаблон, в котором используется форма.
     template_name = 'post_edit.html'
 
+
+
     def form_valid(self, form):
         post = form.save(commit=False)
         post.choice_title = 'NE'
@@ -125,3 +118,19 @@ class ArticleCreate(PermissionRequiredMixin, CreateView):
         post.choice_title = 'AR'
         return super().form_valid(form)
 
+
+class CategoryList(LoginRequiredMixin, ListView):
+    model = Post
+    ordering = '-time_in_comment'
+    template_name = 'news_category.html'
+    context_object_name = 'all'
+    paginate_by = 10
+
+    def get_queryset(self):
+        self.queryset = Category.objects.get(pk=self.kwargs['pk']).post_set.all()
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_author'] = not self.request.user.groups.filter(name = 'author').exists()
+        return context

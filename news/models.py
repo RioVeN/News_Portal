@@ -8,6 +8,7 @@ import django
 class Author(models.Model):
     user_author = models.OneToOneField(User, on_delete=models.CASCADE)
     user_rating = models.IntegerField(default=0)
+    subscribers = models.ManyToManyField('Category', through='PostSubscribers')
 
     def __str__(self):
         return f'{self.user_author.first_name}'
@@ -43,6 +44,7 @@ class Category(models.Model):
 
     category = models.CharField(max_length=2, choices=POSITION, default='HN', unique=True)
 
+
     def __str__(self):
         return self.get_category_display()
 
@@ -61,6 +63,7 @@ class Post(models.Model):
     choice_title = models.CharField(max_length=2, choices=POST)
     post_text = models.TextField(max_length=500)
     categories = models.ManyToManyField('Category', through='PostCategory')
+
     rating_post = models.IntegerField(default=0)
 
     def preview(self):
@@ -86,6 +89,11 @@ class Post(models.Model):
 class PostCategory(models.Model):
     Post = models.ForeignKey(Post, on_delete=models.CASCADE)
     Category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+
+class PostSubscribers(models.Model):
+    Category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    Author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
 
 

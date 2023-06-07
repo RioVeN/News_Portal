@@ -30,9 +30,9 @@ Post
             <tr>
                 <td>{{ news.author.user_author.first_name }}</td>
                 <td>{{ news.title | censor }}</td>
-                <td><a href="{% url 'post_category_list' %}">{% for category in news.categories.all %}
-                        {{category}}
-                    {% endfor %}</a>
+                <td>{% for category in news.categories.all %}
+                       <a href="{% url 'category_list' category.id %}" >{{category}}</a>
+                    {% endfor %}
                 </td>
                 <td>{{ news.time_in_comment |date:'j m Y'  }}</td>
                 <td>{{ news.post_text |truncatewords:20 | censor }}</td>
