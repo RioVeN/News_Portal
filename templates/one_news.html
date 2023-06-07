@@ -13,9 +13,18 @@ Post
 <h1>{{ news.title | censor }}</h1>
 <hr>
 <h5>{{ news.time_in_comment |date:'d m Y'  }}</h5>
+
 <p style="text-indent: 25px;">
 
+
+
+
+    <h4>{% for category in news.categories.all %}
+        {{category}}
+    {% endfor %}</h4>
+
     {{news.post_text | censor}}
+
 <h3>{{ news.author.user_author.first_name }}</h3>
 
 

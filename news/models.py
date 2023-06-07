@@ -60,7 +60,7 @@ class Post(models.Model):
     time_in_comment = models.DateTimeField(default=django.utils.timezone.now)
     choice_title = models.CharField(max_length=2, choices=POST)
     post_text = models.TextField(max_length=500)
-    posts = models.ManyToManyField('Category', through='PostCategory')
+    categories = models.ManyToManyField('Category', through='PostCategory')
     rating_post = models.IntegerField(default=0)
 
     def preview(self):
