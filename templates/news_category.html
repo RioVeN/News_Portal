@@ -34,7 +34,7 @@ Post
                         {{category}}
                     {% endfor %}</td>
                 <td>{{ news.time_in_comment |date:'j m Y'  }}
-                     <button> <a href=""> Подробнее</a> </button>
+                        <button> <a href="/{{news.id}}"> Подробнее!</a> </button>
                 </td>
                 <td>{{ news.post_text |truncatewords:20 | censor }}</td>
             </tr>
