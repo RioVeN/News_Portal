@@ -69,7 +69,13 @@ Post
        {% endif %}
    {% endif %}
 <hr>
-<button> <a href="subscribe/"> Подписаться на категорию!</a> </button>
-
+{% if is_not_subscriber %}
+<button>
+    <a href="subscribe"> Подписаться на категорию!</a>
+ {% endif %}
+</button>
+{% if not is_not_subscriber %}
+<button> <a href="unsubscribe"> Отписаться от категории!</a></button>
+    {% endif %}
 
 {% endblock content %}

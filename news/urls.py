@@ -1,7 +1,7 @@
 from django.urls import path
 # Импортируем созданное нами представление
 from .views import PostList, PostDetail, PostSearch, PostCreate, ArticleCreate, PostUpdate, PostDelete, upgrade_me,\
-    CategoryList
+    CategoryList, subscribe, unsubscribe
 from django.contrib.auth.views import LoginView, LogoutView
 
 
@@ -18,5 +18,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(template_name='logout.html'), name='logout'),
     path('upgrade/', upgrade_me, name='upgrade'),
     path('categories/<int:pk>/', CategoryList.as_view(), name='category_list'),
+    path('categories/<int:pk>/subscribe', subscribe, name='subscribe'),
+    path('categories/<int:pk>/unsubscribe', unsubscribe, name='unsubscribe'),
 
 ]

@@ -2,9 +2,10 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.shortcuts import redirect, render, get_object_or_404
 
 from .forms import PostForm
-from .models import Post, Category
+from .models import Post, Category, User
 from .filters import PostFilter
 
 
@@ -32,6 +33,23 @@ def upgrade_me(request):
     if not request.user.groups.filter(name='author').exists():
         author_group.user_set.add(user)
     return redirect('/')
+
+@login_required
+def subscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+    message = "Вы в рассылке категории"
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
+
+@login_required
+def unsubscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.remove(user)
+    message = 'Вы отписались от рассылки: '
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
+
 
 
 class PostList(LoginRequiredMixin, ListView):
@@ -121,7 +139,7 @@ class ArticleCreate(PermissionRequiredMixin, CreateView):
 
 
 class CategoryList(LoginRequiredMixin, ListView):
-    model = Post
+    model = Post, Category
     ordering = '-time_in_comment'
     template_name = 'news_category.html'
     context_object_name = 'all'
@@ -133,5 +151,8 @@ class CategoryList(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_not_author'] = not self.request.user.groups.filter(name = 'author').exists()
+        context["is_not_subscriber"] = self.request.user not \
+            in Category.objects.get(id=self.kwargs['pk']).subscribers.all()
+        # context['xz'] = Category.objects.get(id=self.kwargs['pk']).subscribers.all()
+        # #context['xz2'] = self.request.category.id
         return context
