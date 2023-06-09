@@ -105,6 +105,15 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.choice_title = 'NE'
+        send_mail(
+            subject='post.title',
+            message='post.post_text',
+            from_email='DJtest26@yandex.ru',
+            recipient_list=['pikni4ok@gmail.com'],
+
+
+
+        )
         return super().form_valid(form)
 
 

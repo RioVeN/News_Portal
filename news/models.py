@@ -76,6 +76,9 @@ class Post(models.Model):
     def preview(self):
         return self.post_text[:124] + '...'
 
+    def message(self):
+        return self.post_text[:50]
+
     def like(self):
         self.rating_post += 1
         self.save()

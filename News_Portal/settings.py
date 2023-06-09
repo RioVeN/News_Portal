@@ -168,3 +168,10 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
 SOCIALACCOUNT_FORMS = {'signup': 'news.views.SocSignupForm'}
+
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'DJtest26'
+EMAIL_HOST_PASSWORD = 'Kvadrat10730590'
+EMAIL_USE_SSL = True
