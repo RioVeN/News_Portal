@@ -14,7 +14,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.forms import SignupForm
 
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 
 class SocSignupForm(SignupForm):
@@ -105,15 +106,32 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.choice_title = 'NE'
-        send_mail(
-            subject='post.title',
-            message='post.post_text',
-            from_email='DJtest26@yandex.ru',
-            recipient_list=['pikni4ok@gmail.com'],
+        # # send_mail(
+        # #     subject=post.title,
+        # #     message=post.post_text[:50],
+        # #     from_email='DJtest26@yandex.ru',
+        # #     recipient_list=['rioven26rus@gmail.com'],
+        # #
+        # #
+        # #
+        # # )
+        # html_content = render_to_string(
+        #     'message.html',
+        #     {
+        #         'post': post,
+        #     }
+        # )
+        # msg = EmailMultiAlternatives(
+        #     subject=post.title,
+        #     body=post.post_text[:50],
+        #     from_email='DJtest26@yandex.ru',
+        #     to=['trstdjango26@gmail.com'],
+        # )
+        # msg.attach_alternative(html_content, "text/html")  # добавляем html
+        # msg.send()  # отсылаем
 
 
 
-        )
         return super().form_valid(form)
 
 
@@ -144,24 +162,57 @@ class ArticleCreate(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.choice_title = 'AR'
+        # send_mail(
+        #     subject=post.title,
+        #     message=post.post_text[:50],
+        #     from_email='DJtest26@yandex.ru',
+        #     recipient_list=['piknini4ok@gmail.com'],
+        #
+        #
+        #
+        # )
+        # html_content = render_to_string(
+        #     'message.html',
+        #     {
+        #         'post': post,
+        #     }
+        # )
+        # msg = EmailMultiAlternatives(
+        #     subject=post.title,
+        #     body=post.post_text,
+        #     from_email='DJtest26@yandex.ru',
+        #     to=['trstdjango26@gmail.com'],
+        # )
+        # msg.attach_alternative(html_content, "text/html")  # добавляем html
+        # msg.send()  # отсылаем
+
+
         return super().form_valid(form)
 
 
 class CategoryList(LoginRequiredMixin, ListView):
-    model = Post, Category
-    ordering = '-time_in_comment'
+    model = Post, #Category
+    #ordering = '-time_in_comment'
     template_name = 'news_category.html'
     context_object_name = 'all'
     paginate_by = 10
 
     def get_queryset(self):
-        self.queryset = Category.objects.get(pk=self.kwargs['pk']).post_set.all()
-        return super().get_queryset()
+        self.categories = get_object_or_404(Category, id=self.kwargs['pk'])
+        #self.queryset = Category.objects.get(pk=self.kwargs['pk']).post_set.all()
+        queryset = Post.objects.filter(categories=self.categories).order_by('-time_in_comment')
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["is_not_subscriber"] = self.request.user not \
-            in Category.objects.get(id=self.kwargs['pk']).subscribers.all()
-        # context['xz'] = Category.objects.get(id=self.kwargs['pk']).subscribers.all()
-        # #context['xz2'] = self.request.category.id
+        context["is_not_subscriber"] = self.request.user not in self.categories.subscribers.all()
+        context['category'] = self.categories
+        # context["is_not_subscriber"] = self.request.user not \
+            # in Category.objects.get(id=self.kwargs['pk']).subscribers.all()
+        # subscribers_emails = []
+        # subscribers_users = Category.objects.get(id=self.kwargs['pk']).subscribers.all()
+        # for sub_user in subscribers_users:
+        #     subscribers_emails.append(sub_user.email)
+        # context['email'] = subscribers_emails
+
         return context

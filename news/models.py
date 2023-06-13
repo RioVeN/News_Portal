@@ -74,7 +74,7 @@ class Post(models.Model):
     rating_post = models.IntegerField(default=0)
 
     def preview(self):
-        return self.post_text[:124] + '...'
+        return self.post_text[:50] + '...'
 
     def message(self):
         return self.post_text[:50]
@@ -93,7 +93,8 @@ class Post(models.Model):
 
 
     def get_absolute_url(self):
-        return reverse('post_detail', args=[str(self.id)])
+        # return reverse('post_detail', args=[str(self.id)])
+        return f'/{self.id}'
 
 
 class PostCategory(models.Model):

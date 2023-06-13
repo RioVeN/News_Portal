@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.flatpages",
-    "news",
+    "news.apps.NewsConfig",
     "accounts",
     'django_filters',
+    'django_apscheduler',
 
     'allauth',
     'allauth.account',
@@ -170,8 +171,13 @@ ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
 SOCIALACCOUNT_FORMS = {'signup': 'news.views.SocSignupForm'}
 
 
+SITE_URL = 'http://127.0.0.1:800'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'DJtest26'
-EMAIL_HOST_PASSWORD = 'Kvadrat10730590'
+EMAIL_HOST_USER = 'RioVeN26R'
+EMAIL_HOST_PASSWORD = 'vejwkbpfrkmauhzn'
 EMAIL_USE_SSL = True
+
+APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
+
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
