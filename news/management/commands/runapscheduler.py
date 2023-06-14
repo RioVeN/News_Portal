@@ -20,7 +20,7 @@ def my_job():
     #  Your job processing logic here...
     today = datetime.datetime.now()
     last_week = today - datetime.timedelta(days=7)
-    posts = Post.objects.filter(time_in_comment=last_week)
+    posts = Post.objects.filter(title='Рублевка') #last_week
     categories = set(posts.values_list('categories__category', flat=True))
     subscribers = set(Category.objects.filter(category__in=categories).values_list('subscribers__email', flat=True))
     html_content = render_to_string(
@@ -30,14 +30,15 @@ def my_job():
             'post': posts,
         }
     )
-    msg = EmailMultiAlternatives(
-        subject='Статьи за неделю',
-        body='',
-        from_email='RioVeN26R@yandex.ru',
-        to=subscribers,
-    )
-    msg.attach_alternative(html_content, 'text/html')
-    msg.send()
+    print(posts.values_list)
+    # msg = EmailMultiAlternatives(
+    #     subject='Статьи за неделю',
+    #     body='',
+    #     from_email='RioVeN26R@yandex.ru',
+    #     to=subscribers,
+    # )
+    # msg.attach_alternative(html_content, 'text/html')
+    # msg.send()
 
 # функция, которая будет удалять неактуальные задачи
 def delete_old_job_executions(max_age=604_800):

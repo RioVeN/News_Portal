@@ -66,7 +66,7 @@ class Post(models.Model):
     ]
     title = models.TextField(max_length=50)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    time_in_comment = models.DateTimeField(default=django.utils.timezone.now)
+    time_in_comment = models.DateTimeField(auto_now_add=True)  #default=django.utils.timezone.now
     choice_title = models.CharField(max_length=2, choices=POST)
     post_text = models.TextField(max_length=500)
     categories = models.ManyToManyField('Category', through='PostCategory')
