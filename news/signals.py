@@ -18,7 +18,7 @@ def send_notifications(preview, pk, title, subscribers):
     msg = EmailMultiAlternatives(
         subject=title,
         body='',
-        from_email='DJtest26@yandex.ru',
+        from_email='djtest26@mail.ru',
         to=subscribers,
     )
 

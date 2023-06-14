@@ -27,14 +27,14 @@ def my_job():
          'daily_post.html',
         {
             'link': 'http://127.0.0.1:8000',
-            'post': posts,
+            'posts': posts,
         }
     )
    # print(subscribers)
     msg = EmailMultiAlternatives(
         subject='Статьи за неделю',
         body='',
-        from_email='DJtest26@yandex.ru',
+        from_email='djtest26@mail.ru',
         to=subscribers,
     )
     msg.attach_alternative(html_content, 'text/html')
@@ -56,7 +56,7 @@ class Command(BaseCommand):
         # добавляем работу нашему задачнику
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(second="*/5"), #second="*/10"
+            trigger=CronTrigger(day_of_week=6), #second="*/10"
             # То же, что и интервал, но задача тригера таким образом более понятна django
             id="my_job",  # уникальный айди
             max_instances=1,

@@ -165,17 +165,17 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
 SOCIALACCOUNT_FORMS = {'signup': 'news.views.SocSignupForm'}
 
 
 SITE_URL = 'http://127.0.0.1:800'
-EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'DJtest26'  #'RioVeN26R'
-EMAIL_HOST_PASSWORD = 'ncutjnwcwzbolnwd' #vejwkbpfrkmauhzn'
+EMAIL_HOST_USER = 'djtest26'  #'RioVeN26R'
+EMAIL_HOST_PASSWORD = 'tnAtQerYA75aHPsy6F0X' #vejwkbpfrkmauhzn'
 EMAIL_USE_SSL = True
 
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
