@@ -174,8 +174,8 @@ SOCIALACCOUNT_FORMS = {'signup': 'news.views.SocSignupForm'}
 SITE_URL = 'http://127.0.0.1:800'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'RioVeN26R'
-EMAIL_HOST_PASSWORD = 'vejwkbpfrkmauhzn'
+EMAIL_HOST_USER = 'DJtest26'  #'RioVeN26R'
+EMAIL_HOST_PASSWORD = 'ncutjnwcwzbolnwd' #vejwkbpfrkmauhzn'
 EMAIL_USE_SSL = True
 
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'

@@ -20,8 +20,8 @@ def my_job():
     #  Your job processing logic here...
     today = datetime.datetime.now()
     last_week = today - datetime.timedelta(days=7)
-    posts = Post.objects.filter(title='Рублевка') #last_week
-    categories = set(posts.values_list('categories__category', flat=True))
+    posts = Post.objects.filter(time_in_comment__gte=last_week) #last_week
+    categories = set(posts.values_list('categories__category', flat=True))#('categories__post', flat=True))
     subscribers = set(Category.objects.filter(category__in=categories).values_list('subscribers__email', flat=True))
     html_content = render_to_string(
          'daily_post.html',
@@ -30,15 +30,15 @@ def my_job():
             'post': posts,
         }
     )
-    print(posts.values_list)
-    # msg = EmailMultiAlternatives(
-    #     subject='Статьи за неделю',
-    #     body='',
-    #     from_email='RioVeN26R@yandex.ru',
-    #     to=subscribers,
-    # )
-    # msg.attach_alternative(html_content, 'text/html')
-    # msg.send()
+   # print(subscribers)
+    msg = EmailMultiAlternatives(
+        subject='Статьи за неделю',
+        body='',
+        from_email='DJtest26@yandex.ru',
+        to=subscribers,
+    )
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
 
 # функция, которая будет удалять неактуальные задачи
 def delete_old_job_executions(max_age=604_800):
@@ -56,7 +56,7 @@ class Command(BaseCommand):
         # добавляем работу нашему задачнику
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(second="*/10"), #second="*/10"
+            trigger=CronTrigger(second="*/5"), #second="*/10"
             # То же, что и интервал, но задача тригера таким образом более понятна django
             id="my_job",  # уникальный айди
             max_instances=1,
