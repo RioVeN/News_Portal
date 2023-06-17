@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect, render, get_object_or_404
+from django.http import HttpResponse
 
 from .forms import PostForm
 from .models import Post, Category, User
@@ -13,6 +14,11 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.forms import SignupForm
+from .tasks import hello, printer
+from datetime import datetime, timedelta
+
+
+
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -53,14 +59,21 @@ def unsubscribe(request, pk):
 
 
 
-class PostList(LoginRequiredMixin, ListView):
+class PostList(ListView):
     model = Post
     ordering = '-time_in_comment'
     template_name = 'news.html'
     context_object_name = 'all'
     paginate_by = 10
+    hello.delay()
+
+    # def get(self, request):
+    #     hello.delay()
+    #     return request
 
     def get_context_data(self, **kwargs):
+        printer.apply_async([10], eta=datetime.utcnow() + timedelta(seconds=5), expires=6)
+        hello.delay()
         context = super().get_context_data(**kwargs)
         context['is_not_author'] = not self.request.user.groups.filter(name = 'author').exists()
         return context

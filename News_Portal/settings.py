@@ -146,7 +146,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -184,3 +184,10 @@ EMAIL_USE_SSL = True
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
 
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+
+CELERY_BROKER_URL = 'redis://:V8oyoAeC6bLFNynI1cq4LdKv9BeAmI8B@redis-16508.c2.eu-west-1-3.ec2.cloud.redislabs.com:16508'
+CELERY_RESULT_BACKEND = 'redis://:V8oyoAeC6bLFNynI1cq4LdKv9BeAmI8B@redis-16508.c2.eu-west-1-3.ec2.cloud.redislabs.com:16508'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
