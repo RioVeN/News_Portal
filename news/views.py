@@ -2,11 +2,10 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
 
 from .forms import PostForm
-from .models import Post, Category, User
+from .models import Post, Category
 from .filters import PostFilter
 
 
@@ -14,14 +13,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.forms import SignupForm
-from .tasks import hello, send_create_message
-from datetime import datetime, timedelta
-
-
-
-
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
+from .tasks import send_create_message
 
 
 class SocSignupForm(SignupForm):
@@ -32,7 +24,6 @@ class SocSignupForm(SignupForm):
         return user
 
 
-
 @login_required
 def upgrade_me(request):
     user = request.user
@@ -41,6 +32,7 @@ def upgrade_me(request):
         author_group.user_set.add(user)
     return redirect('/')
 
+
 @login_required
 def subscribe(request, pk):
     user = request.user
@@ -48,6 +40,7 @@ def subscribe(request, pk):
     category.subscribers.add(user)
     message = "Вы в рассылке категории"
     return render(request, 'subscribe.html', {'category': category, 'message': message})
+
 
 @login_required
 def unsubscribe(request, pk):
@@ -58,7 +51,6 @@ def unsubscribe(request, pk):
     return render(request, 'subscribe.html', {'category': category, 'message': message})
 
 
-
 class PostList(ListView):
     model = Post
     ordering = '-time_in_comment'
@@ -66,15 +58,11 @@ class PostList(ListView):
     context_object_name = 'all'
     paginate_by = 10
 
-    # def get(self, request):
-    #     hello.delay()
-    #     return request
-
     def get_context_data(self, **kwargs):
-        hello.delay()
         context = super().get_context_data(**kwargs)
         context['is_not_author'] = not self.request.user.groups.filter(name = 'author').exists()
         return context
+
 
 class PostDetail(DetailView):
     model = Post
@@ -99,53 +87,20 @@ class PostSearch(ListView):
         context['filterset'] = self.filterset
         context['curr_date'] = self.request.GET.get('time_in_comment__date__gte')
         context['curr_title'] = self.request.GET.get('title__icontains')
-
         return context
 
 
 class PostCreate(PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_post',)
-    # Указываем нашу разработанную форму
     form_class = PostForm
-    # модель товаров
     model = Post
-    # и новый шаблон, в котором используется форма.
     template_name = 'post_edit.html'
-
-
 
     def form_valid(self, form):
         post = form.save(commit=False)
         post.choice_title = 'NE'
         post.save()
         send_create_message.delay(post.pk)
-
-        # # send_mail(
-        # #     subject=post.title,
-        # #     message=post.post_text[:50],
-        # #     from_email='DJtest26@yandex.ru',
-        # #     recipient_list=['rioven26rus@gmail.com'],
-        # #
-        # #
-        # #
-        # # )
-        # html_content = render_to_string(
-        #     'message.html',
-        #     {
-        #         'post': post,
-        #     }
-        # )
-        # msg = EmailMultiAlternatives(
-        #     subject=post.title,
-        #     body=post.post_text[:50],
-        #     from_email='DJtest26@yandex.ru',
-        #     to=['trstdjango26@gmail.com'],
-        # )
-        # msg.attach_alternative(html_content, "text/html")  # добавляем html
-        # msg.send()  # отсылаем
-
-
-
         return super().form_valid(form)
 
 
@@ -166,54 +121,26 @@ class PostDelete(PermissionRequiredMixin, DeleteView):
 
 class ArticleCreate(PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_post')
-    # Указываем нашу разработанную форму
     form_class = PostForm
-    # модель товаров
     model = Post
-    # и новый шаблон, в котором используется форма.
     template_name = 'article_create.html'
 
     def form_valid(self, form):
         post = form.save(commit=False)
         post.choice_title = 'AR'
-        # send_mail(
-        #     subject=post.title,
-        #     message=post.post_text[:50],
-        #     from_email='DJtest26@yandex.ru',
-        #     recipient_list=['piknini4ok@gmail.com'],
-        #
-        #
-        #
-        # )
-        # html_content = render_to_string(
-        #     'message.html',
-        #     {
-        #         'post': post,
-        #     }
-        # )
-        # msg = EmailMultiAlternatives(
-        #     subject=post.title,
-        #     body=post.post_text,
-        #     from_email='DJtest26@yandex.ru',
-        #     to=['trstdjango26@gmail.com'],
-        # )
-        # msg.attach_alternative(html_content, "text/html")  # добавляем html
-        # msg.send()  # отсылаем
-
-
+        post.save()
+        send_create_message.delay(post.pk)
         return super().form_valid(form)
 
 
 class CategoryList(LoginRequiredMixin, ListView):
-    model = Post, #Category
-    #ordering = '-time_in_comment'
+    model = Post,
     template_name = 'news_category.html'
     context_object_name = 'all'
     paginate_by = 10
 
     def get_queryset(self):
         self.categories = get_object_or_404(Category, id=self.kwargs['pk'])
-        #self.queryset = Category.objects.get(pk=self.kwargs['pk']).post_set.all()
         queryset = Post.objects.filter(categories=self.categories).order_by('-time_in_comment')
         return queryset
 
@@ -221,12 +148,4 @@ class CategoryList(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["is_not_subscriber"] = self.request.user not in self.categories.subscribers.all()
         context['category'] = self.categories
-        # context["is_not_subscriber"] = self.request.user not \
-            # in Category.objects.get(id=self.kwargs['pk']).subscribers.all()
-        # subscribers_emails = []
-        # subscribers_users = Category.objects.get(id=self.kwargs['pk']).subscribers.all()
-        # for sub_user in subscribers_users:
-        #     subscribers_emails.append(sub_user.email)
-        # context['email'] = subscribers_emails
-
         return context

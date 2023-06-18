@@ -1,5 +1,4 @@
 from celery import shared_task
-import time
 import datetime
 from .models import PostCategory, Post, Category
 from django.template.loader import render_to_string
@@ -7,34 +6,29 @@ from django.core.mail import EmailMultiAlternatives
 
 
 @shared_task
-def hello():
-    time.sleep(10)
-    print("Hello, world!")
-
-@shared_task #(bind=True)
 def message_monday():
     today = datetime.datetime.now()
     last_week = today - datetime.timedelta(days=7)
     posts = Post.objects.filter(time_in_comment__gte=last_week)  # last_week
     categories = set(posts.values_list('categories__category', flat=True))  # ('categories__post', flat=True))
-    subscribers = set(Category.objects.filter(category__in=categories)) #.values_list('subscribers'))#'subscribers__username', flat=True))
-    print(categories, subscribers)
-    # html_content = render_to_string(
-    #     'daily_post.html',
-    #     {
-    #         'link': 'http://127.0.0.1:8000',
-    #         'posts': posts,
-    #     }
-    # )
-    # # print(subscribers)
-    # msg = EmailMultiAlternatives(
-    #     subject='Статьи за неделю',
-    #     body='',
-    #     from_email='djtest26@mail.ru',
-    #     to=['psakltv@gmail.com', 'trstdjango26@gmail.com', 'rioven26rus@gmail.com', 'djtest26@yandex.ru', 'pikni4ok@gmail.com']  #subscribers,
-    # )
-    # msg.attach_alternative(html_content, 'text/html')
-    # msg.send()
+    subscribers = set(Category.objects.filter(category__in=categories).values_list('subscribers__email', flat=True))#'subscribers__username', flat=True))
+    subscribers_emails = list(filter(None, subscribers))
+    print(categories, subscribers, subscribers_emails)
+    html_content = render_to_string(
+        'daily_post.html',
+        {
+            'link': 'http://127.0.0.1:8000',
+            'posts': posts,
+        }
+    )
+    msg = EmailMultiAlternatives(
+        subject='Статьи за неделю',
+        body='',
+        from_email='djtest26@mail.ru',
+        to=subscribers_emails
+    )
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
 
 @shared_task
 def send_create_message(pk):
