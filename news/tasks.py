@@ -11,11 +11,30 @@ def hello():
     time.sleep(10)
     print("Hello, world!")
 
-@shared_task
-def printer(N):
-    for i in range(N):
-        time.sleep(1)
-        print(i+1)
+@shared_task #(bind=True)
+def message_monday():
+    today = datetime.datetime.now()
+    last_week = today - datetime.timedelta(days=7)
+    posts = Post.objects.filter(time_in_comment__gte=last_week)  # last_week
+    categories = set(posts.values_list('categories__category', flat=True))  # ('categories__post', flat=True))
+    subscribers = set(Category.objects.filter(category__in=categories)) #.values_list('subscribers'))#'subscribers__username', flat=True))
+    print(categories, subscribers)
+    # html_content = render_to_string(
+    #     'daily_post.html',
+    #     {
+    #         'link': 'http://127.0.0.1:8000',
+    #         'posts': posts,
+    #     }
+    # )
+    # # print(subscribers)
+    # msg = EmailMultiAlternatives(
+    #     subject='Статьи за неделю',
+    #     body='',
+    #     from_email='djtest26@mail.ru',
+    #     to=['psakltv@gmail.com', 'trstdjango26@gmail.com', 'rioven26rus@gmail.com', 'djtest26@yandex.ru', 'pikni4ok@gmail.com']  #subscribers,
+    # )
+    # msg.attach_alternative(html_content, 'text/html')
+    # msg.send()
 
 @shared_task
 def send_create_message(pk):
