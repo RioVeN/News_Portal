@@ -3,6 +3,7 @@ from django.urls import path
 from .views import PostList, PostDetail, PostSearch, PostCreate, ArticleCreate, PostUpdate, PostDelete, upgrade_me,\
     CategoryList, subscribe, unsubscribe
 from django.contrib.auth.views import LoginView, LogoutView
+from django.views.decorators.cache import cache_page
 
 
 urlpatterns = [

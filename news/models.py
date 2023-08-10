@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
@@ -90,11 +91,13 @@ class Post(models.Model):
     def __str__(self):
         return self.get_choice_title_display()
 
-
-
     def get_absolute_url(self):
         # return reverse('post_detail', args=[str(self.id)])
         return f'/{self.id}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'post-{self.pk}')  # затем удаляем его из кэша, чтобы сбросить его
 
 
 class PostCategory(models.Model):

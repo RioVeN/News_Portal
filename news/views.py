@@ -14,6 +14,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.forms import SignupForm
 from .tasks import send_create_message
+from django.core.cache import cache
 
 
 class SocSignupForm(SignupForm):
@@ -68,6 +69,14 @@ class PostDetail(DetailView):
     model = Post
     template_name = 'one_news.html'
     context_object_name = "news"
+    queryset = Post.objects.all()
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
 
 class PostSearch(ListView):

@@ -10,8 +10,8 @@ def message_monday():
     today = datetime.datetime.now()
     last_week = today - datetime.timedelta(days=7)
     posts = Post.objects.filter(time_in_comment__gte=last_week)  # last_week
-    categories = set(posts.values_list('categories__category', flat=True))  # ('categories__post', flat=True))
-    subscribers = set(Category.objects.filter(category__in=categories).values_list('subscribers__email', flat=True))#'subscribers__username', flat=True))
+    categories = set(posts.values_list('categories__category', flat=True))
+    subscribers = set(Category.objects.filter(category__in=categories).values_list('subscribers__email', flat=True))
     subscribers_emails = list(filter(None, subscribers))
     print(categories, subscribers, subscribers_emails)
     html_content = render_to_string(
